@@ -327,11 +327,11 @@ def manufactured_problem_1(t: float) -> tuple[np.ndarray, np.ndarray, np.ndarray
     U(t)^T Q(t) U(t) = I_2, together with their exact time derivatives.
 
     The paper does not give explicit formulas for this manufactured
-    problem (uncertainty flagged in the task specification); the
-    construction below is designed from scratch to satisfy the stated
-    constraints: a nonconstant, uniformly positive definite 4x4 metric and
-    a smooth rank-2 Q-orthonormal frame, both given by closed-form
-    analytic expressions so that exact derivatives are available.
+    problem; the construction below is designed from scratch to satisfy
+    the stated constraints: a nonconstant, uniformly positive definite
+    4x4 metric and a smooth rank-2 Q-orthonormal frame, both given by
+    closed-form analytic expressions so that exact derivatives are
+    available.
 
     Q(t) = I_4 + 0.3*sin(t) * S1 + 0.2*cos(2t) * S2 for fixed symmetric
     S1, S2 chosen to keep Q uniformly positive definite on [0, 2].
