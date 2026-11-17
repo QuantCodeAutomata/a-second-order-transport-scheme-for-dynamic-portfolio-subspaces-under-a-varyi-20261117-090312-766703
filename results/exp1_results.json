@@ -1,0 +1,46 @@
+{
+  "rk4_order_check": {
+    "step_counts": [
+      10,
+      20,
+      40,
+      80,
+      160,
+      320
+    ],
+    "errors": [
+      2.0754498229200834e-08,
+      1.2846311585052509e-09,
+      8.009134902774652e-11,
+      5.002778709801298e-12,
+      3.1224068748078273e-13,
+      1.9788460217528896e-14
+    ],
+    "observed_orders": [
+      4.013997953657792,
+      4.003563964021189,
+      4.0008448765873075,
+      4.001999188870551,
+      3.979927281694808
+    ],
+    "finest_order": 3.979927281694808
+  },
+  "gauge_covariance_check": {
+    "n_gauges": 100,
+    "max_vector_error": 3.823289429535189e-12,
+    "max_norm_error": 3.3898439610879905e-12,
+    "max_coefficient_identity_error": 3.617041135012949e-12,
+    "max_projector_gauge_error": 6.661338147750939e-16,
+    "max_connection_covariance_error": 2.220446049250313e-15,
+    "max_connection_skew_error": 2.220446049250313e-15
+  },
+  "motion_decomposition_check": {
+    "decomposition_sum_ok": true,
+    "tangential_normal_orthogonality_residual": 1.7169808993429467e-16,
+    "normal_q_orthogonality_residual": 2.0368917448945454e-16,
+    "rebalancing_energy": 0.002227927318492921,
+    "rebalancing_energy_theoretical": 0.002227927318492921,
+    "rebalancing_energy_matches": true,
+    "rebalancing_energy_positive": true
+  }
+}
