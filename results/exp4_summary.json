@@ -1,0 +1,182 @@
+{
+  "data": {
+    "industries": {
+      "n_obs": 9149,
+      "n_assets": 48,
+      "start": "1990-01-02",
+      "end": "2026-04-30",
+      "n_missing": 0
+    },
+    "size_value": {
+      "n_obs": 3774,
+      "n_assets": 100,
+      "start": "2009-07-01",
+      "end": "2024-06-28",
+      "n_missing": 0
+    }
+  },
+  "config": {
+    "cov_window": 504,
+    "ridge": 1e-10,
+    "rank_industries": 5,
+    "rank_sizevalue": 8,
+    "persistence_primary": 0.25,
+    "rebalance_freq_primary": 21,
+    "composition_reps_run": 1000,
+    "composition_reps_paper": 1000
+  },
+  "table4": [
+    {
+      "panel": "industries",
+      "method": "independent_local",
+      "annualized_turnover": 5.917590936791947,
+      "ce_net_annualized": 0.08216801030570527,
+      "ce_gross_annualized": 0.08809599903376959,
+      "mean_net_return_ann": 0.13321915967713643,
+      "vol_net_ann": 0.18449400231449745,
+      "turnover_reduction_vs_local_pct": 0.0,
+      "ce_diff_vs_geo_bps": -11.049164720484534
+    },
+    {
+      "panel": "industries",
+      "method": "ambient_projection",
+      "annualized_turnover": 2.5269236863056768,
+      "ce_net_annualized": 0.08302032449912436,
+      "ce_gross_annualized": 0.08556509988690598,
+      "mean_net_return_ann": 0.13439874632394483,
+      "vol_net_ann": 0.18508442334900366,
+      "turnover_reduction_vs_local_pct": 57.298101316959624,
+      "ce_diff_vs_geo_bps": -2.5260227862936024
+    },
+    {
+      "panel": "industries",
+      "method": "euclidean_procrustes",
+      "annualized_turnover": 2.593216549053081,
+      "ce_net_annualized": 0.08282003799038207,
+      "ce_gross_annualized": 0.08543094445007748,
+      "mean_net_return_ann": 0.13407465932416485,
+      "vol_net_ann": 0.18486130086541855,
+      "turnover_reduction_vs_local_pct": 56.177833568554846,
+      "ce_diff_vs_geo_bps": -4.528887873716525
+    },
+    {
+      "panel": "industries",
+      "method": "risk_weighted_procrustes",
+      "annualized_turnover": 2.625227898444341,
+      "ce_net_annualized": 0.08340999449605146,
+      "ce_gross_annualized": 0.08605191162834656,
+      "mean_net_return_ann": 0.13466354383971024,
+      "vol_net_ann": 0.1848593676687636,
+      "turnover_reduction_vs_local_pct": 55.63688118213299,
+      "ce_diff_vs_geo_bps": 1.3706771829774533
+    },
+    {
+      "panel": "industries",
+      "method": "symmetric_procrustes",
+      "annualized_turnover": 2.6251699347780724,
+      "ce_net_annualized": 0.08332661458847836,
+      "ce_gross_annualized": 0.08596839212602994,
+      "mean_net_return_ann": 0.13455464624648694,
+      "vol_net_ann": 0.1848133438267258,
+      "turnover_reduction_vs_local_pct": 55.63786069671735,
+      "ce_diff_vs_geo_bps": 0.5368781072463691
+    },
+    {
+      "panel": "industries",
+      "method": "geometric_mean",
+      "annualized_turnover": 2.6267201610721713,
+      "ce_net_annualized": 0.08327292677775372,
+      "ce_gross_annualized": 0.08591616671571314,
+      "mean_net_return_ann": 0.13448775230706123,
+      "vol_net_ann": 0.18478952067716115,
+      "turnover_reduction_vs_local_pct": 55.611663781272235,
+      "ce_diff_vs_geo_bps": 0.0
+    },
+    {
+      "panel": "size_value",
+      "method": "independent_local",
+      "annualized_turnover": 9.54012791644197,
+      "ce_net_annualized": 0.047684638692040815,
+      "ce_gross_annualized": 0.062140956998299315,
+      "mean_net_return_ann": 0.1039316367940151,
+      "vol_net_ann": 0.19367361596365054,
+      "turnover_reduction_vs_local_pct": 0.0,
+      "ce_diff_vs_geo_bps": -85.68889785332802
+    },
+    {
+      "panel": "size_value",
+      "method": "ambient_projection",
+      "annualized_turnover": 4.774505853077428,
+      "ce_net_annualized": 0.05700789172445463,
+      "ce_gross_annualized": 0.06432499664922867,
+      "mean_net_return_ann": 0.11621388721354324,
+      "vol_net_ann": 0.1987026368500514,
+      "turnover_reduction_vs_local_pct": 49.95343988156817,
+      "ce_diff_vs_geo_bps": 7.543632470810163
+    },
+    {
+      "panel": "size_value",
+      "method": "euclidean_procrustes",
+      "annualized_turnover": 4.901899327323029,
+      "ce_net_annualized": 0.05722487490377709,
+      "ce_gross_annualized": 0.06473030207042037,
+      "mean_net_return_ann": 0.11632255639256009,
+      "vol_net_ann": 0.19852079606052928,
+      "turnover_reduction_vs_local_pct": 48.618096421172375,
+      "ce_diff_vs_geo_bps": 9.71346426403473
+    },
+    {
+      "panel": "size_value",
+      "method": "risk_weighted_procrustes",
+      "annualized_turnover": 4.905304899971439,
+      "ce_net_annualized": 0.05609885066301213,
+      "ce_gross_annualized": 0.0636102593284912,
+      "mean_net_return_ann": 0.11575634096941727,
+      "vol_net_ann": 0.19945883412892984,
+      "turnover_reduction_vs_local_pct": 48.5823990733146,
+      "ce_diff_vs_geo_bps": -1.5467781436148687
+    },
+    {
+      "panel": "size_value",
+      "method": "symmetric_procrustes",
+      "annualized_turnover": 4.903032131619819,
+      "ce_net_annualized": 0.05626614899670537,
+      "ce_gross_annualized": 0.063773616932285,
+      "mean_net_return_ann": 0.11592565423548877,
+      "vol_net_ann": 0.19946220246262525,
+      "turnover_reduction_vs_local_pct": 48.60622232150924,
+      "ce_diff_vs_geo_bps": 0.12620519331756064
+    },
+    {
+      "panel": "size_value",
+      "method": "geometric_mean",
+      "annualized_turnover": 4.903178650899127,
+      "ce_net_annualized": 0.05625352847737362,
+      "ce_gross_annualized": 0.06376086296907638,
+      "mean_net_return_ann": 0.11596337965043964,
+      "vol_net_ann": 0.1995463465833849,
+      "turnover_reduction_vs_local_pct": 48.6046865006,
+      "ce_diff_vs_geo_bps": 0.0
+    }
+  ],
+  "bootstrap": [
+    {
+      "panel": "industries",
+      "turnover_diff_local_minus_geo_mean": 0.27357360210777265,
+      "turnover_diff_ci_low": 0.24502850353185981,
+      "turnover_diff_ci_high": 0.30436152174895525,
+      "daily_return_diff_local_minus_geo_mean": -5.034097737796659e-06,
+      "daily_return_diff_ci_low": -3.742589247282048e-05,
+      "daily_return_diff_ci_high": 2.5536880630866224e-05
+    },
+    {
+      "panel": "size_value",
+      "turnover_diff_local_minus_geo_mean": 0.38393543598244684,
+      "turnover_diff_ci_low": 0.3131416861540956,
+      "turnover_diff_ci_high": 0.4519134304889598,
+      "daily_return_diff_local_minus_geo_mean": -4.774501133501798e-05,
+      "daily_return_diff_ci_low": -0.00012247706084046433,
+      "daily_return_diff_ci_high": 1.5437611739017347e-05
+    }
+  ]
+}
