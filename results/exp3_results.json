@@ -1,0 +1,26 @@
+{
+  "n_states": 1727,
+  "n_valid_states": 1727,
+  "n_rejected_states": 0,
+  "spearman_corr": 0.4482604429948719,
+  "spearman_ci_low": 0.37610727147105444,
+  "spearman_ci_high": 0.5233318140037708,
+  "quartile_means": [
+    1.5719717691060925e-05,
+    2.6232832570635934e-05,
+    2.895328467497483e-05,
+    8.331578582138352e-05
+  ],
+  "quartile_ratio_top_over_bottom": 5.300081557365457,
+  "median_ratio_sep_over_D": 0.9186436802464621,
+  "median_sep_geo_sym": 7.62057009037007e-07,
+  "median_sep_rp_geo": 1.6526043614812158e-05,
+  "ratio_geo_sym_closer": 21.6860988335974,
+  "data_summary": {
+    "n_obs": 9149,
+    "n_assets": 48,
+    "start": "1990-01-02",
+    "end": "2026-04-30",
+    "n_missing": 0
+  }
+}

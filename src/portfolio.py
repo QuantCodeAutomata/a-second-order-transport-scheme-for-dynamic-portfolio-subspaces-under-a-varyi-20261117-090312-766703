@@ -201,20 +201,26 @@ def certainty_equivalent(r: np.ndarray, ann_days: int, risk_aversion: float) -> 
 def composition_discrepancy(returns: pd.DataFrame, rank: int, method: str, *,
                              cov_window: int, ridge: float, step: int,
                              horizon: int, sv_tol: float,
-                             n_samples: int = 200, seed: int = 0) -> np.ndarray:
-    """Relative Frobenius discrepancy between the direct coefficient map
-    over `horizon` observations and the composition of `horizon // step`
-    successive `step`-observation maps (Sec. 4.7's direct-vs-composed
-    diagnostic), sampled at `n_samples` random start dates.
+                             start_sep: int = 65,
+                             n_samples: int = 1000, seed: int = 0) -> np.ndarray:
+    """Relative Frobenius discrepancy between the direct coefficient map over
+    `horizon` observations and the composition of successive `step`-observation
+    maps, with a shorter final sub-interval when `horizon` is not a multiple
+    of `step` (Sec. 4.7, Appendix C: "composed at five observation intervals,
+    including a shorter final interval where required").
+
+    Starting dates are deterministically spaced `start_sep` (>= horizon)
+    observations apart so that comparison windows are disjoint at both the
+    21- and 63-day horizons (Sec. 4.7), capped at `n_samples` windows.
     """
-    assert horizon % step == 0, "horizon must be a multiple of the step"
-    n_hops = horizon // step
+    n_full = horizon // step
+    remainder = horizon - n_full * step
+    sub_steps = [step] * n_full + ([remainder] if remainder else [])
     n_obs = len(returns)
-    rng = np.random.default_rng(seed)
     low = cov_window
     high = n_obs - horizon - 1
     assert high > low, "sample too short for the requested horizon"
-    starts = rng.integers(low, high, size=min(n_samples, high - low))
+    starts = np.arange(low, high, start_sep)[:n_samples]
 
     def frame_at(t: int):
         Q = rolling_covariances(returns, cov_window, ridge, np.array([t]))[t]
@@ -238,13 +244,14 @@ def composition_discrepancy(returns: pd.DataFrame, rank: int, method: str, *,
 
     discrepancies = []
     for start in starts:
+        offsets = np.concatenate(([0], np.cumsum(sub_steps)))
         try:
-            frames = [frame_at(int(start + k * step)) for k in range(n_hops + 1)]
+            frames = [frame_at(int(start + off)) for off in offsets]
         except ValueError:
             continue
         direct = coefficient_map(frames[0][0], frames[0][1], frames[-1][0], frames[-1][1])
         composed = np.eye(rank)
-        for k in range(n_hops):
+        for k in range(len(sub_steps)):
             R = coefficient_map(frames[k][0], frames[k][1], frames[k + 1][0], frames[k + 1][1])
             composed = R @ composed
         denom = np.linalg.norm(direct, "fro")
