@@ -267,11 +267,9 @@ No other interpretation of these two steps is stated in the paper.
 
 ## Not reproduced
 
-Nothing in the four experiments reported here was left unimplemented. One
-exact value is not reproduced in magnitude, listed under "Deviations from the
-paper" above rather than here because it is attributed to a specific, checked
-cause rather than an omitted methodology step:
-
-- the local error coefficient magnitude `‖D(0.37)‖₂ = 0.118` quoted for the
-  paper's own 6-asset noncommuting path in experiment 2, which depends on the
-  specific (unspecified) analytic path construction.
+Nothing in the four experiments is left unimplemented. The one metric with a
+"not reproduced" verdict above — the local error coefficient magnitude
+`‖D(0.37)‖₂ = 0.118` on the paper's own 6-asset noncommuting path in
+experiment 2 — is attributed to a specific, checked cause (the paper's path
+formulas are unspecified, see "Deviations from the paper" above) rather than
+to an omitted methodology step, so it is not repeated as a separate item here.
