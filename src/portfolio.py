@@ -203,11 +203,17 @@ def composition_discrepancy(returns: pd.DataFrame, rank: int, method: str, *,
                              horizon: int, sv_tol: float,
                              start_sep: int = 65,
                              n_samples: int = 1000, seed: int = 0) -> np.ndarray:
-    """Relative Frobenius discrepancy between the direct coefficient map over
-    `horizon` observations and the composition of successive `step`-observation
-    maps, with a shorter final sub-interval when `horizon` is not a multiple
-    of `step` (Sec. 4.7, Appendix C: "composed at five observation intervals,
-    including a shorter final interval where required").
+    """Relative Frobenius discrepancy between the direct coefficient map
+    (computed by `method` over the full `horizon`) and a common composed
+    reference path built by chaining successive `step`-observation geometric
+    mean updates, with a shorter final sub-interval when `horizon` is not a
+    multiple of `step` (Sec. 4.7: "the reference is constructed from
+    geometric mean updates, [so] the diagnostic measures consistency with
+    this specified discrete path rather than error relative to an
+    independently known continuous transport"). The composed reference does
+    not depend on `method`; only the direct endpoint map does, so the
+    `geometric_mean` row's nonzero discrepancy reflects only the
+    non-associativity of composing sub-step updates versus one direct update.
 
     Starting dates are deterministically spaced `start_sep` (>= horizon)
     observations apart so that comparison windows are disjoint at both the
@@ -252,10 +258,68 @@ def composition_discrepancy(returns: pd.DataFrame, rank: int, method: str, *,
         direct = coefficient_map(frames[0][0], frames[0][1], frames[-1][0], frames[-1][1])
         composed = np.eye(rank)
         for k in range(len(sub_steps)):
-            R = coefficient_map(frames[k][0], frames[k][1], frames[k + 1][0], frames[k + 1][1])
+            # Reference path is always the geometric mean update (Sec. 4.7),
+            # regardless of which `method` the direct endpoint map uses.
+            R = geometric_mean_update(frames[k][0], frames[k][1], frames[k + 1][0], frames[k + 1][1],
+                                       sv_tol=sv_tol)
             composed = R @ composed
         denom = np.linalg.norm(direct, "fro")
         if denom < 1e-14:
             continue
         discrepancies.append(np.linalg.norm(composed - direct, "fro") / denom)
     return np.array(discrepancies)
+
+
+def composition_discrepancy_all_methods(returns: pd.DataFrame, rank: int, methods: tuple,
+                                         *, cov_window: int, ridge: float, step: int,
+                                         horizon: int, sv_tol: float,
+                                         start_sep: int = 65,
+                                         n_samples: int = 1000, seed: int = 0) -> dict:
+    """Same diagnostic as `composition_discrepancy` (Sec. 4.7) for every
+    method in `methods` at once, reusing the rolling frames shared by all
+    methods at a given horizon instead of recomputing them once per method."""
+    n_full = horizon // step
+    remainder = horizon - n_full * step
+    sub_steps = [step] * n_full + ([remainder] if remainder else [])
+    n_obs = len(returns)
+    low = cov_window
+    high = n_obs - horizon - 1
+    assert high > low, "sample too short for the requested horizon"
+    starts = np.arange(low, high, start_sep)[:n_samples]
+
+    def frame_at(t: int):
+        Q = rolling_covariances(returns, cov_window, ridge, np.array([t]))[t]
+        return Q, investable_subspace_frame(Q, rank)
+
+    def coefficient_map(method, Q0, U0, Q1, U1):
+        if method == "ambient_projection":
+            return U1.T @ Q1 @ U0
+        if method == "euclidean_procrustes":
+            return euclidean_procrustes(U0, U1, sv_tol=sv_tol)
+        if method == "risk_weighted_procrustes":
+            return risk_weighted_procrustes(Q0, U0, Q1, U1, sv_tol=sv_tol)
+        if method == "symmetric_procrustes":
+            return symmetric_procrustes_update(Q0, U0, Q1, U1, sv_tol=sv_tol)
+        if method == "geometric_mean":
+            return geometric_mean_update(Q0, U0, Q1, U1, sv_tol=sv_tol)
+        raise ValueError(f"Unknown transport method: {method}")
+
+    discrepancies = {m: [] for m in methods}
+    offsets = np.concatenate(([0], np.cumsum(sub_steps)))
+    for start in starts:
+        try:
+            frames = [frame_at(int(start + off)) for off in offsets]
+        except ValueError:
+            continue
+        composed = np.eye(rank)
+        for k in range(len(sub_steps)):
+            R = geometric_mean_update(frames[k][0], frames[k][1], frames[k + 1][0], frames[k + 1][1],
+                                       sv_tol=sv_tol)
+            composed = R @ composed
+        for method in methods:
+            direct = coefficient_map(method, frames[0][0], frames[0][1], frames[-1][0], frames[-1][1])
+            denom = np.linalg.norm(direct, "fro")
+            if denom < 1e-14:
+                continue
+            discrepancies[method].append(np.linalg.norm(composed - direct, "fro") / denom)
+    return {m: np.array(v) for m, v in discrepancies.items()}

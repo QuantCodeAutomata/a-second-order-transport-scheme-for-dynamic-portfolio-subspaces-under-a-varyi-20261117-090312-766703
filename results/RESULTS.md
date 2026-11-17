@@ -144,38 +144,50 @@ wealth; `CE = 252·mean(r) − 1.5·252·var(r)`.
 
 ### Direct versus composed coefficient-map discrepancy (`results/exp4_composition_discrepancy.csv`)
 
+Section 4.7 defines this diagnostic as the discrepancy between each rule's
+*direct* endpoint coefficient map over the full horizon and a *composed*
+reference path built by chaining successive five-observation geometric mean
+updates; the composed reference is the same for every rule compared, so only
+the direct map varies with the transport rule.
+
 | Panel | Horizon (days) | Method | Median discrepancy |
 |---|---|---|---|
-| industries | 21 | ambient_projection | 0.384% |
-| industries | 21 | risk_weighted_procrustes | 0.162% |
-| industries | 21 | symmetric_procrustes | 0.152% |
+| industries | 21 | ambient_projection | 2.572% |
+| industries | 21 | risk_weighted_procrustes | 0.195% |
+| industries | 21 | symmetric_procrustes | 0.151% |
 | industries | 21 | geometric_mean | 0.150% |
-| industries | 63 | ambient_projection | 1.899% |
-| industries | 63 | risk_weighted_procrustes | 0.830% |
+| industries | 63 | ambient_projection | 6.957% |
+| industries | 63 | risk_weighted_procrustes | 0.893% |
+| industries | 63 | symmetric_procrustes | 0.749% |
 | industries | 63 | geometric_mean | 0.715% |
+| size_value | 21 | ambient_projection | 3.953% |
+| size_value | 21 | risk_weighted_procrustes | 0.363% |
+| size_value | 21 | symmetric_procrustes | 0.236% |
+| size_value | 21 | geometric_mean | 0.225% |
+| size_value | 63 | ambient_projection | 11.461% |
+| size_value | 63 | risk_weighted_procrustes | 1.857% |
+| size_value | 63 | symmetric_procrustes | 1.566% |
+| size_value | 63 | geometric_mean | 1.551% |
 
 The paper reports an example median discrepancy of 0.131% (second-order
 updates) versus 2.305% (ambient projection) at the 21-day horizon, an
 ambient-to-second-order ratio of about 17.6×.
 
-| Metric | Paper | Observed | Verdict |
+| Metric | Paper | Observed (industries, 21 days) | Verdict |
 |---|---|---|---|
 | Second-order (Geometric mean) discrepancy | 0.131% | 0.150% | partially reproduced (14.5% relative difference, same order of magnitude) |
-| Ambient-projection discrepancy | 2.305% | 0.384% | not reproduced (83% relative difference) |
-| Ambient-to-second-order ratio | ≈17.6× | 2.56× | not reproduced (85% relative difference) |
-| Ranking (ambient largest; Geometric mean and Symmetric Procrustes closest pair) | holds | holds (0.150% vs. 0.152%, both far below Risk-weighted Procrustes and ambient projection) | reproduced (qualitative) |
+| Ambient-projection discrepancy | 2.305% | 2.572% | partially reproduced (11.6% relative difference, same order of magnitude) |
+| Ambient-to-second-order ratio | ≈17.6× | 17.15× | reproduced (2.6% relative difference) |
+| Ranking (ambient largest; Geometric mean and Symmetric Procrustes closest pair) | holds | holds (0.150% vs. 0.151%, both far below Risk-weighted Procrustes and ambient projection) | reproduced (qualitative) |
 
-The qualitative ranking of the four rules is reproduced and the second-order
-updates' own discrepancy is close to the paper's value, but the absolute size
-of ambient projection's path-dependence on this data is markedly smaller than
-the paper reports. A synthetic check (three chained rank-2 frames, coefficient
-maps composed analytically and compared against literal step-by-step
-transport) confirmed that the composition formula used here is exact to
-machine precision (maximum discrepancy 1.1e-16), so the gap is not attributable
-to a composition-formula defect in this implementation; its remaining cause
-(for example a different momentum-driven path through subspace space, or a
-different sampling of decision dates for the reported example) was not
-identified.
+The qualitative ranking of the four rules and the ambient-to-second-order
+ratio are both reproduced closely, and the absolute magnitudes of both the
+second-order and the ambient-projection discrepancies are within about 15%
+of the paper's reported example. The 63-day horizon and the size-value panel
+show the same ranking and the same widening gap between ambient projection
+and the two second-order rules as the horizon grows, consistent with the
+first-order-in-time growth of ambient projection's path dependence implied
+by Theorem 3.7.
 
 ### Sensitivity to persistence weight and rebalancing frequency
 
@@ -188,8 +200,9 @@ dominant lever on turnover and CE (Sec. 4.7): **reproduced** (qualitative).
 ### Deviations from the paper used for experiment 4
 
 Two details of the methodology that the paper's text leaves open were
-resolved as follows, and both are the most likely source of the turnover and
-composition-discrepancy gaps above:
+resolved as follows, and are the most likely source of the remaining turnover
+gaps above (the composition-discrepancy diagnostic is now within about 15%
+of the paper's reported example, see above):
 
 - the "momentum signal compounded over 252 daily returns" is implemented as
   the simple compounded (buy-and-hold) return `∏(1+r_i) − 1` over the trailing
@@ -254,16 +267,11 @@ No other interpretation of these two steps is stated in the paper.
 
 ## Not reproduced
 
-Nothing in the four experiments reported here was left unimplemented. Two exact
-values are not reproduced in magnitude, both listed under "Deviations from
-the paper" above rather than here because each is attributed to a specific,
-checked cause rather than an omitted methodology step:
+Nothing in the four experiments reported here was left unimplemented. One
+exact value is not reproduced in magnitude, listed under "Deviations from the
+paper" above rather than here because it is attributed to a specific, checked
+cause rather than an omitted methodology step:
 
 - the local error coefficient magnitude `‖D(0.37)‖₂ = 0.118` quoted for the
   paper's own 6-asset noncommuting path in experiment 2, which depends on the
-  specific (unspecified) analytic path construction;
-- the absolute size of the ambient-projection direct-versus-composed
-  discrepancy and its ratio to the second-order updates in experiment 4
-  (paper: 2.305%, ratio ≈17.6×; observed: 0.384%, ratio 2.56×), whose
-  composition-formula implementation was verified exact to machine precision
-  on a synthetic check, leaving the remaining gap's cause unidentified.
+  specific (unspecified) analytic path construction.

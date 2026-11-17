@@ -26,7 +26,7 @@ import numpy as np
 import pandas as pd
 
 from src import config as cfg
-from src.portfolio import METHODS, composition_discrepancy, run_backtest
+from src.portfolio import METHODS, composition_discrepancy_all_methods, run_backtest
 from data.data_loader import (
     FrenchDataError,
     INDUSTRY_DATASET,
@@ -157,14 +157,19 @@ def run_composition(name: str, returns: pd.DataFrame, rank: int, n_samples: int)
     ambient projection, risk weighted Procrustes, symmetric Procrustes and
     the geometric mean update, at 21- and 63-day horizons."""
     rows = []
+    methods = ("ambient_projection", "risk_weighted_procrustes",
+               "symmetric_procrustes", "geometric_mean")
     for horizon in cfg.EXP4_COMPOSITION_HORIZONS:
-        for method in ("ambient_projection", "risk_weighted_procrustes",
-                       "symmetric_procrustes", "geometric_mean"):
-            disc = composition_discrepancy(
-                returns, rank, method, cov_window=cfg.EXP4_COV_WINDOW, ridge=cfg.EXP4_RIDGE,
-                step=cfg.EXP4_COMPOSITION_SUBINTERVAL, horizon=horizon,
-                sv_tol=cfg.EXP4_ENDPOINT_SV_TOL, start_sep=cfg.EXP4_COMPOSITION_START_SEP,
-                n_samples=n_samples, seed=0)
+        # All four methods share the same geometric-mean composed reference
+        # path (Sec. 4.7), so the rolling frames are computed once per
+        # horizon and reused across methods rather than recomputed per call.
+        disc_by_method = composition_discrepancy_all_methods(
+            returns, rank, methods, cov_window=cfg.EXP4_COV_WINDOW, ridge=cfg.EXP4_RIDGE,
+            step=cfg.EXP4_COMPOSITION_SUBINTERVAL, horizon=horizon,
+            sv_tol=cfg.EXP4_ENDPOINT_SV_TOL, start_sep=cfg.EXP4_COMPOSITION_START_SEP,
+            n_samples=n_samples, seed=0)
+        for method in methods:
+            disc = disc_by_method[method]
             rows.append({
                 "panel": name, "horizon": horizon, "method": method,
                 "n_samples": len(disc),
